@@ -1,6 +1,6 @@
 # Devvit Math Game
 A simple math game built in [Devvit](https://developers.reddit.com) :)
-![](https://i.ibb.co/wrF87Qz/Screenshot-2023-12-13-060523.png)
+![](https://github.com/ni5arga/devvit-math-game/blob/main/screen-capture.gif?raw=true)
 
 **See it in action :** [https://sh.reddit.com/r/ni5arga/comments/18h2n2m/ni5arga_math_game/](https://sh.reddit.com/r/ni5arga/comments/18h2n2m/ni5arga_math_game/)
 

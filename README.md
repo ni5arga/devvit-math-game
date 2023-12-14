@@ -12,4 +12,4 @@ These resources greatly helped me while building this.
 <p> https://github.com/reddit/devvit </p>
 <p> https://github.com/reddit/devvit-sandbox </p>
 
-Special thanks to [/u/pl00h](https://reddit.com/u/pl00h) for helping me with Devvit & [/u/cederaspen](https://www.reddit.com/user/cedaraspen/) for flagging a bug with the layout! :)
+Special thanks to [/u/pl00h](https://reddit.com/u/pl00h) for helping me with Devvit & [/u/cedaraspen](https://www.reddit.com/user/cedaraspen/) for flagging a bug with the layout! :)

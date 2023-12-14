@@ -1,5 +1,5 @@
 # Devvit Math Game
-A simple math game built in [Devvit](https://developers.reddit.com) :)
+A simple math game with in [Devvit](https://developers.reddit.com) :)
 
 ## Demonstration 
 ![](https://github.com/ni5arga/devvit-math-game/blob/main/screen-capture.gif?raw=true)
@@ -12,4 +12,4 @@ These resources greatly helped me while building this.
 <p> https://github.com/reddit/devvit </p>
 <p> https://github.com/reddit/devvit-sandbox </p>
 
-Special thanks to [/u/pl00h](https://reddit.com/u/pl00h) for helping me with Devvit! :)
+Special thanks to [/u/pl00h](https://reddit.com/u/pl00h) for helping me with Devvit & [/u/cederaspen](https://www.reddit.com/user/cedaraspen/) for flagging a bug with the layout! :)

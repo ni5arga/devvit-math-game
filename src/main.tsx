@@ -10,7 +10,6 @@ const generateMathQuestion = () => {
   return { question: `${num1} ${operator} ${num2} = ?`, answer };
 };
 
-
 Devvit.configure({
   redditAPI: true,
 });
@@ -39,7 +38,6 @@ Devvit.addMenuItem({
   },
 });
 
-
 Devvit.addCustomPostType({
   name: 'MathGame',
   render: context => {
@@ -54,16 +52,8 @@ Devvit.addCustomPostType({
       }
     };
 
-    const handleNegativeClick = () => {
-      if (!gameOver && !userAnswer.includes('-')) {
-        setUserAnswer('-' + userAnswer);
-      }
-    };
-
-    const handleBackspaceClick = () => {
-      if (!gameOver && userAnswer.length > 0) {
-        setUserAnswer(userAnswer.slice(0, -1));
-      }
+    const handleClear = () => {
+      setUserAnswer('');
     };
 
     const handleSubmitClick = () => {
@@ -91,54 +81,58 @@ Devvit.addCustomPostType({
     updateInterval.start();
 
     return (
-      <vstack alignment='center middle' height='100%' gap='large'>
-        {gameOver ? (
+      <vstack alignment='center middle' height='100%' gap='small'>
+        <text size='xxlarge' weight='bold'>
+          {questionData.question}
+        </text>
+        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
+          {[1, 2, 3].map(value => (
+            <button key={value} onPress={() => handleNumberClick(value)}>
+              {value}
+            </button>
+          ))}
+        </hstack>
+        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
+          {[4, 5, 6].map(value => (
+            <button key={value} onPress={() => handleNumberClick(value)}>
+              {value}
+            </button>
+          ))}
+        </hstack>
+        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
+          {[7, 8, 9].map(value => (
+            <button key={value} onPress={() => handleNumberClick(value)}>
+              {value}
+            </button>
+          ))}
+        </hstack>
+        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
+          {[0, '✓', 'C'].map(value => (
+            <button
+              key={value}
+              onPress={() => {
+                if (value === '✓') {
+                  handleSubmitClick();
+                } else if (value === 'C') {
+                  handleClear();
+                } else {
+                  handleNumberClick(value);
+                }
+              }}
+            >
+              {value}
+            </button>
+          ))}
+        </hstack>
+        <text>{`Your Answer: ${userAnswer}`}</text>
+        {gameOver && (
           <text size='xxlarge' weight='bold'>
             Game Over! Your Score: {score}
           </text>
-        ) : (
-          <>
-            <text size='xxlarge' weight='bold'>
-              {questionData.question}
-            </text>
-            <hstack alignment='center' gap='medium'>
-              {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map(number => (
-                <button
-                  key={number}
-                  appearance='primary'
-                  onPress={() => handleNumberClick(number)}
-                >
-                  {number}
-                </button>
-              ))}
-              <button
-                appearance='primary'
-                onPress={handleNegativeClick}
-              >
-                (-)
-              </button>
-              <button
-                appearance='primary'
-                onPress={handleBackspaceClick}
-              >
-                ←
-              </button>
-            </hstack>
-            <button
-              appearance='primary'
-              onPress={handleSubmitClick}
-            >
-              Submit
-            </button>
-            <text>{`Your Answer: ${userAnswer}`}</text>
-            <text>{`Score: ${score}`}</text>
-          </>
         )}
       </vstack>
     );
   },
-  
 });
-
 
 export default Devvit;

@@ -57,6 +57,18 @@ Devvit.addCustomPostType({
       setUserAnswer('');
     };
 
+    const handleBackspace = () => {
+      if (!gameOver && userAnswer.length > 0) {
+        setUserAnswer(userAnswer.slice(0, -1));
+      }
+    };
+
+    const handleAddNegative = () => {
+      if (!gameOver && userAnswer.length === 0) {
+        setUserAnswer('-');
+      }
+    };
+
     const handleSubmitClick = () => {
       if (!gameOver) {
         const selectedAnswer = parseInt(userAnswer, 10);
@@ -72,7 +84,7 @@ Devvit.addCustomPostType({
     };
 
     const handleRestartClick = () => {
-     
+      // Reset the game state
       setScore(0);
       setGameOver(false);
       setIsGameOver(false);
@@ -86,7 +98,6 @@ Devvit.addCustomPostType({
         setQuestionData({ question, answer });
       }
     };
-
 
     const updateInterval = context.useInterval(tick, 50000); 
     updateInterval.start();
@@ -118,14 +129,16 @@ Devvit.addCustomPostType({
           ))}
         </hstack>
         <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
-          {[0, '✓', 'C'].map(value => (
+          {[0, '(-)', '<-', '✓'].map(value => (
             <button
               key={value}
               onPress={() => {
-                if (value === '✓') {
+                if (value === '(-)') {
+                  handleAddNegative();
+                } else if (value === '<-') {
+                  handleBackspace();
+                } else if (value === '✓') {
                   handleSubmitClick();
-                } else if (value === 'C') {
-                  handleClear();
                 } else {
                   handleNumberClick(value);
                 }
@@ -143,7 +156,7 @@ Devvit.addCustomPostType({
             </text>
             <button
               onPress={handleRestartClick}
-              style={{ width: '50%' }}
+              style={{ width: '50%' }} 
             >
               Restart
             </button>

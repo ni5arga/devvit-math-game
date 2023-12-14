@@ -45,6 +45,7 @@ Devvit.addCustomPostType({
     const [userAnswer, setUserAnswer] = context.useState('');
     const [score, setScore] = context.useState(0);
     const [gameOver, setGameOver] = context.useState(false);
+    const [isGameOver, setIsGameOver] = context.useState(false);
 
     const handleNumberClick = (number) => {
       if (!gameOver) {
@@ -63,10 +64,20 @@ Devvit.addCustomPostType({
           setScore(score + 10);
         } else {
           setGameOver(true);
+          setIsGameOver(true);
         }
         setQuestionData(generateMathQuestion());
         setUserAnswer('');
       }
+    };
+
+    const handleRestartClick = () => {
+     
+      setScore(0);
+      setGameOver(false);
+      setIsGameOver(false);
+      setQuestionData(generateMathQuestion());
+      setUserAnswer('');
     };
 
     const tick = () => {
@@ -76,8 +87,8 @@ Devvit.addCustomPostType({
       }
     };
 
-    // Start the interval when the component mounts
-    const updateInterval = context.useInterval(tick, 50000); // Adjust the interval as needed
+
+    const updateInterval = context.useInterval(tick, 50000); 
     updateInterval.start();
 
     return (
@@ -125,10 +136,18 @@ Devvit.addCustomPostType({
           ))}
         </hstack>
         <text>{`Your Answer: ${userAnswer}`}</text>
-        {gameOver && (
-          <text size='xxlarge' weight='bold'>
-            Game Over! Your Score: {score}
-          </text>
+        {isGameOver && (
+          <vstack>
+            <text size='xxlarge' weight='bold'>
+              Game Over! Your Score: {score}
+            </text>
+            <button
+              onPress={handleRestartClick}
+              style={{ width: '50%' }}
+            >
+              Restart
+            </button>
+          </vstack>
         )}
       </vstack>
     );

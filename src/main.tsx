@@ -2,12 +2,14 @@ import { Devvit } from '@devvit/public-api';
 
 // code written by https://github.com/ni5arga/
 
-const generateMathQuestion = () => {
+const generateMathQuestion = (operation) => {
+  if (operation === 'mixed') {
+    operation = ['+', '-', '*'][Math.floor(Math.random() * 3)];
+  }
   const num1 = Math.floor(Math.random() * 10) + 1;
   const num2 = Math.floor(Math.random() * 10) + 1;
-  const operator = ['+', '-', '*'][Math.floor(Math.random() * 3)];
-  const answer = eval(`${num1} ${operator} ${num2}`);
-  return { question: `${num1} ${operator} ${num2} = ?`, answer };
+  const answer = eval(`${num1} ${operation} ${num2}`);
+  return { question: `${num1} ${operation} ${num2} = ?`, answer };
 };
 
 Devvit.configure({
@@ -41,114 +43,165 @@ Devvit.addMenuItem({
 Devvit.addCustomPostType({
   name: 'MathGame',
   render: context => {
-    const [questionData, setQuestionData] = context.useState(generateMathQuestion);
+    const [operation, setOperation] = context.useState('+');
+    const [questionData, setQuestionData] = context.useState(() => generateMathQuestion(operation));
     const [userAnswer, setUserAnswer] = context.useState('');
     const [score, setScore] = context.useState(0);
+    const [gameStarted, setGameStarted] = context.useState(false);
     const [gameOver, setGameOver] = context.useState(false);
     const [isGameOver, setIsGameOver] = context.useState(false);
+    const [operationChosen, setOperationChosen] = context.useState(false);
 
     const handleNumberClick = (number) => {
-      if (!gameOver) {
+      if (gameStarted && !gameOver) {
         setUserAnswer(userAnswer + number);
       }
     };
 
-    const handleClear = () => {
-      setUserAnswer('');
-    };
-
-    const handleBackspace = () => {
-      if (!gameOver && userAnswer.length > 0) {
-        setUserAnswer(userAnswer.slice(0, -1));
+    const handleOperationChange = (selectedOperation) => {
+      if (!gameStarted) {
+        setOperation(selectedOperation);
+        setOperationChosen(true);
+        startGame();
       }
     };
 
-    const handleAddNegative = () => {
-      if (!gameOver && userAnswer.length === 0) {
-        setUserAnswer('-');
+    const handleMixedClick = () => {
+      if (!gameStarted) {
+        setOperation('mixed');
+        setOperationChosen(true);
+        startGame();
       }
+    };
+
+    const startGame = () => {
+      setGameStarted(true);
+      setQuestionData(generateMathQuestion(operation));
     };
 
     const handleSubmitClick = () => {
-      if (!gameOver) {
+      if (gameStarted && !gameOver) {
         const selectedAnswer = parseInt(userAnswer, 10);
         if (selectedAnswer === questionData.answer) {
           setScore(score + 10);
+          if (operation !== 'mixed') {
+            setQuestionData(generateMathQuestion(operation));
+          } else {
+            setQuestionData(generateMathQuestion('mixed'));
+          }
+          setUserAnswer('');
         } else {
           setGameOver(true);
           setIsGameOver(true);
         }
-        setQuestionData(generateMathQuestion());
-        setUserAnswer('');
       }
     };
 
     const handleRestartClick = () => {
-      // Reset the game state
       setScore(0);
       setGameOver(false);
       setIsGameOver(false);
-      setQuestionData(generateMathQuestion());
+      setGameStarted(false);
+      setOperationChosen(false);
+      setQuestionData(generateMathQuestion(operation));
       setUserAnswer('');
     };
 
     const tick = () => {
-      if (!gameOver) {
-        const { question, answer } = generateMathQuestion();
+      if (gameStarted && !gameOver) {
+        const { question, answer } = generateMathQuestion(operation);
         setQuestionData({ question, answer });
       }
     };
 
-    const updateInterval = context.useInterval(tick, 50000); 
+    const updateInterval = context.useInterval(tick, 50000);
     updateInterval.start();
 
     return (
       <vstack alignment='center middle' height='100%' gap='small'>
-        <text size='xxlarge' weight='bold'>
-          {questionData.question}
-        </text>
-        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
-          {[1, 2, 3].map(value => (
-            <button key={value} onPress={() => handleNumberClick(value)}>
-              {value}
+        {operationChosen && (
+          <text>
+            {`Operation Type: ${operation === 'mixed' ? 'Mixed' : operation}`}
+          </text>
+        )}
+        {!gameStarted && !operationChosen && (
+          <text>
+            {`Choose Operation Type`}
+          </text>
+        )}
+        {!gameStarted && !operationChosen && (
+          <hstack alignment='center' gap='small' s>
+            {['+', '-', '*'].map(op => (
+              <button
+                key={op}
+                onPress={() => handleOperationChange(op)}
+                style={{
+                  backgroundColor: operation === op ? 'blue' : 'gray',
+                }}
+              >
+                {op}
+              </button>
+            ))}
+            <button onPress={handleMixedClick}>
+              Mixed
             </button>
-          ))}
-        </hstack>
-        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
-          {[4, 5, 6].map(value => (
-            <button key={value} onPress={() => handleNumberClick(value)}>
-              {value}
-            </button>
-          ))}
-        </hstack>
-        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
-          {[7, 8, 9].map(value => (
-            <button key={value} onPress={() => handleNumberClick(value)}>
-              {value}
-            </button>
-          ))}
-        </hstack>
-        <hstack alignment='center' gap='small' style={{ flexWrap: 'wrap' }}>
-          {[0, '(-)', '<-', '✓'].map(value => (
-            <button
-              key={value}
-              onPress={() => {
-                if (value === '(-)') {
-                  handleAddNegative();
-                } else if (value === '<-') {
-                  handleBackspace();
-                } else if (value === '✓') {
-                  handleSubmitClick();
-                } else {
-                  handleNumberClick(value);
-                }
-              }}
-            >
-              {value}
-            </button>
-          ))}
-        </hstack>
-        <text>{`Your Answer: ${userAnswer}`}</text>
+          </hstack>
+        )}
+        {gameStarted && (
+          <text size='xxlarge' weight='bold'>
+            {questionData.question}
+          </text>
+        )}
+        {gameStarted && (
+          <hstack alignment='center' gap='small'>
+            {[1, 2, 3].map(value => (
+              <button key={value} onPress={() => handleNumberClick(value)}>
+                {value}
+              </button>
+            ))}
+          </hstack>
+        )}
+        {gameStarted && (
+          <hstack alignment='center' gap='small'>
+            {[4, 5, 6].map(value => (
+              <button key={value} onPress={() => handleNumberClick(value)}>
+                {value}
+              </button>
+            ))}
+          </hstack>
+        )}
+        {gameStarted && (
+          <hstack alignment='center' gap='small'>
+            {[7, 8, 9].map(value => (
+              <button key={value} onPress={() => handleNumberClick(value)}>
+                {value}
+              </button>
+            ))}
+          </hstack>
+        )}
+        {gameStarted && (
+          <hstack alignment='center' gap='small'>
+            {[0, '(-)', '<-', '✓'].map(value => (
+              <button
+                key={value}
+                onPress={() => {
+                  if (value === '(-)') {
+                    handleNumberClick('-');
+                  } else if (value === '<-') {
+                    setUserAnswer(userAnswer.slice(0, -1));
+                  } else if (value === '✓') {
+                    handleSubmitClick();
+                  } else {
+                    handleNumberClick(value);
+                  }
+                }}
+              >
+                {value}
+              </button>
+            ))}
+          </hstack>
+        )}
+        {gameStarted && <text>{`Your Answer: ${userAnswer}`}</text>}
         {isGameOver && (
           <vstack>
             <text size='xxlarge' weight='bold'>
@@ -156,7 +209,6 @@ Devvit.addCustomPostType({
             </text>
             <button
               onPress={handleRestartClick}
-              style={{ width: '50%' }} 
             >
               Restart
             </button>

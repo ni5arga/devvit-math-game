@@ -1,8 +1,8 @@
-import { Devvit } from '@devvit/public-api';
+import {Devvit} from '@devvit/public-api';
 
 // code written by https://github.com/ni5arga/
 
-const generateMathQuestion = (operation) => {
+const generateMathQuestion = (operation: string | string[]) => {
   if (operation === 'mixed') {
     operation = ['+', '-', '*'][Math.floor(Math.random() * 3)];
   }
@@ -14,30 +14,6 @@ const generateMathQuestion = (operation) => {
 
 Devvit.configure({
   redditAPI: true,
-});
-
-Devvit.addMenuItem({
-  label: 'New Math Game',
-  location: 'subreddit',
-  onPress: async (_, { reddit, ui }) => {
-    const subreddit = await reddit.getCurrentSubreddit();
-    await reddit.submitPost({
-      preview: (
-        <vstack padding="medium" cornerRadius="medium">
-          <text style="heading" size="medium">
-            Loading maths game...
-          </text>
-        </vstack>
-      ),
-      title: `${subreddit.name} Math Game`,
-      subredditName: subreddit.name,
-    });
-
-    ui.showToast({
-      text: `Successfully created a Math Game post!`,
-      appearance: 'success',
-    });
-  },
 });
 
 Devvit.addCustomPostType({
@@ -52,13 +28,13 @@ Devvit.addCustomPostType({
     const [isGameOver, setIsGameOver] = context.useState(false);
     const [operationChosen, setOperationChosen] = context.useState(false);
 
-    const handleNumberClick = (number) => {
+    const handleNumberClick = (number: string | number) => {
       if (gameStarted && !gameOver) {
         setUserAnswer(userAnswer + number);
       }
     };
 
-    const handleOperationChange = (selectedOperation) => {
+    const handleOperationChange = (selectedOperation: string) => {
       if (!gameStarted) {
         setOperation(selectedOperation);
         setOperationChosen(true);
@@ -130,14 +106,10 @@ Devvit.addCustomPostType({
           </text>
         )}
         {!gameStarted && !operationChosen && (
-          <hstack alignment='center' gap='small' s>
-            {['+', '-', '*'].map(op => (
+          <hstack alignment='center' gap='small'>
+            {['+', '-', '*'].map((op, index) => (
               <button
-                key={op}
                 onPress={() => handleOperationChange(op)}
-                style={{
-                  backgroundColor: operation === op ? 'blue' : 'gray',
-                }}
               >
                 {op}
               </button>
@@ -155,7 +127,9 @@ Devvit.addCustomPostType({
         {gameStarted && (
           <hstack alignment='center' gap='small'>
             {[1, 2, 3].map(value => (
-              <button key={value} onPress={() => handleNumberClick(value)}>
+              <button
+                onPress={() => handleNumberClick(value)}
+              >
                 {value}
               </button>
             ))}
@@ -164,7 +138,9 @@ Devvit.addCustomPostType({
         {gameStarted && (
           <hstack alignment='center' gap='small'>
             {[4, 5, 6].map(value => (
-              <button key={value} onPress={() => handleNumberClick(value)}>
+              <button
+                onPress={() => handleNumberClick(value)}
+              >
                 {value}
               </button>
             ))}
@@ -173,7 +149,9 @@ Devvit.addCustomPostType({
         {gameStarted && (
           <hstack alignment='center' gap='small'>
             {[7, 8, 9].map(value => (
-              <button key={value} onPress={() => handleNumberClick(value)}>
+              <button
+                onPress={() => handleNumberClick(value)}
+              >
                 {value}
               </button>
             ))}
@@ -183,7 +161,6 @@ Devvit.addCustomPostType({
           <hstack alignment='center' gap='small'>
             {[0, '(-)', '<-', '✓'].map(value => (
               <button
-                key={value}
                 onPress={() => {
                   if (value === '(-)') {
                     handleNumberClick('-');

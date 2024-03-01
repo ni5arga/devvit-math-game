@@ -1,4 +1,4 @@
-import {Devvit} from '@devvit/public-api';
+import { Devvit } from '@devvit/public-api';
 
 // code written by https://github.com/ni5arga/
 
@@ -95,21 +95,22 @@ Devvit.addCustomPostType({
 
     return (
       <vstack alignment='center middle' height='100%' gap='small'>
-        {operationChosen && (
+        {operationChosen && !isGameOver && (
           <text>
             {`Operation Type: ${operation === 'mixed' ? 'Mixed' : operation}`}
           </text>
         )}
-        {!gameStarted && !operationChosen && (
+        {!gameStarted && !operationChosen && !isGameOver && (
           <text>
             {`Choose Operation Type`}
           </text>
         )}
-        {!gameStarted && !operationChosen && (
+        {!gameStarted && !operationChosen && !isGameOver && (
           <hstack alignment='center' gap='small'>
             {['+', '-', '*'].map((op, index) => (
               <button
                 onPress={() => handleOperationChange(op)}
+                key={index}
               >
                 {op}
               </button>
@@ -129,6 +130,7 @@ Devvit.addCustomPostType({
             {[1, 2, 3].map(value => (
               <button
                 onPress={() => handleNumberClick(value)}
+                key={value}
               >
                 {value}
               </button>
@@ -140,6 +142,7 @@ Devvit.addCustomPostType({
             {[4, 5, 6].map(value => (
               <button
                 onPress={() => handleNumberClick(value)}
+                key={value}
               >
                 {value}
               </button>
@@ -151,6 +154,7 @@ Devvit.addCustomPostType({
             {[7, 8, 9].map(value => (
               <button
                 onPress={() => handleNumberClick(value)}
+                key={value}
               >
                 {value}
               </button>
@@ -172,6 +176,7 @@ Devvit.addCustomPostType({
                     handleNumberClick(value);
                   }
                 }}
+                key={value}
               >
                 {value}
               </button>

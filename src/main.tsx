@@ -1,4 +1,4 @@
-import { Devvit } from '@devvit/public-api';
+\import { Devvit } from '@devvit/public-api';
 
 // code written by https://github.com/ni5arga/
 
@@ -15,6 +15,32 @@ const generateMathQuestion = (operation: string | string[]) => {
 Devvit.configure({
   redditAPI: true,
 });
+
+
+Devvit.addMenuItem({
+  label: 'New Math Game',
+  location: 'subreddit',
+  onPress: async (_, { reddit, ui }) => {
+    const subreddit = await reddit.getCurrentSubreddit();
+    await reddit.submitPost({
+      preview: (
+        <vstack padding="medium" cornerRadius="medium">
+          <text style="heading" size="medium">
+            Loading maths game...
+          </text>
+        </vstack>
+      ),
+      title: `${subreddit.name} Math Game`,
+      subredditName: subreddit.name,
+    });
+
+    ui.showToast({
+      text: `Successfully created a Math Game post!`,
+      appearance: 'success',
+    });
+  },
+});
+
 
 Devvit.addCustomPostType({
   name: 'MathGame',

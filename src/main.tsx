@@ -1,4 +1,4 @@
-\import { Devvit } from '@devvit/public-api';
+import { Devvit } from '@devvit/public-api';
 
 // code written by https://github.com/ni5arga/
 
